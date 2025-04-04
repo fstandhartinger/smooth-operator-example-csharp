@@ -1,0 +1,14 @@
+# IDE specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# User-specific files
+.vs/
+
+# Environment variables file
+.env 
