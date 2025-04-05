@@ -42,8 +42,8 @@ await client.Keyboard.TypeAsync("3+4");
 Console.WriteLine("Clicking equals sign...");
 // Click the UI element described as "the equals sign" using ScreenGrasp.
 // Alternatives:
-// - await client.Keyboard.TypeAsync("="); // Simpler if the equals key works
-// - Using Windows UI Automation method client.Automation.InvokeAsync() (a bit more complex to implement but more robust)
+// - await client.Keyboard.TypeAsync("="); // Simpler and faster
+// - Using Windows UI Automation, e.g. client.Automation.InvokeAsync() a bit more complex to implement but very robust (not affected by focus changes)
 await client.Mouse.ClickByDescriptionAsync("the equals sign");
 
 if (!string.IsNullOrEmpty(openaiApiKey))
@@ -58,17 +58,15 @@ if (!string.IsNullOrEmpty(openaiApiKey))
         // Convert the automation tree of the focused window to a JSON string.
         var focusedWindowJson = overview.FocusInfo.FocusedElementParentWindow.ToJsonString();
 
-        // Use GPT-4o (or another AI model) to interpret the automation tree and extract the result.
-        // This demonstrates integrating AI for understanding application state.
+        // You can use GPT-4o or other AI models for all sorts of tasks together with the Smooth Operator Agent Tools.
+        // In this case we use it to read the result of the calculator from its automation tree.
+        // But it can also for example be used to decide which button to click next, what text to type, etc.
         Console.WriteLine("Asking OpenAI about the result...");
         try
         {
             var openAIClient = new OpenAIClient(openaiApiKey);
-            var chatClient = openAIClient.GetChatClient("chatgpt-4o-latest"); // Use a suitable model
-            var result = await chatClient.CompleteChatAsync(
-                new ChatMessage[] {
-                    ChatMessage.CreateUserMessage($"What result does the calculator display? You can read it from its automation tree: {focusedWindowJson}")
-                });
+            var chatClient = openAIClient.GetChatClient("gpt-4o"); // Use a suitable model
+            var result = await chatClient.CompleteChatAsync(ChatMessage.CreateUserMessage($"What result does the calculator display? You can read it from its automation tree: {focusedWindowJson}"));  
 
             Console.WriteLine("OpenAI Result: " + result.Value.Content[0].Text);
         }
@@ -102,7 +100,7 @@ if (!string.IsNullOrEmpty(openaiApiKey))
      try
      {
         var openAIClient = new OpenAIClient(openaiApiKey);
-        var chatClient = openAIClient.GetChatClient("gpt-4o-latest"); // Or "gpt-4-vision-preview" if needed
+        var chatClient = openAIClient.GetChatClient("gpt-4o");
         var result = await chatClient.CompleteChatAsync(
             new ChatMessage[] {
                  ChatMessage.CreateUserMessage(new ChatMessageContentPart[] {
