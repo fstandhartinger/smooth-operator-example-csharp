@@ -3,6 +3,15 @@ using OpenAI;
 using OpenAI.Chat;
 using SmoothOperator.AgentTools;
 
+
+// If you want to run another example that summarizes data from some twitter feeds, comment out the following two lines
+// await new TwitterAiNewsChecker().Run();
+// return;
+
+// If you want to run the example that collects order data from email into a mock ERP, uncomment the following two lines
+// await new CollectOrdersFromEmailIntoErpSystem().Run();
+// return;
+
 // Load environment variables from .env file
 Env.TraversePath().Load();
 
