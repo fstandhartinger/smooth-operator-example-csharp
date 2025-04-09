@@ -2,14 +2,11 @@
 using OpenAI;
 using OpenAI.Chat;
 using SmoothOperator.AgentTools;
-using System.Text.Json; // Added for JsonElement
 
 public class TwitterAiNewsChecker
 {
     public async Task Run()
     {
-        //WARNING: THIS EXAMPLE CLOSES ALL OPEN CHROME WINDOWS AND TABS! SEE PARAMETER "ForceClose" BELOW
-
         // Load environment variables from .env file
         Env.TraversePath().Load();
 
@@ -41,7 +38,7 @@ public class TwitterAiNewsChecker
         Console.WriteLine("Opening browser...");
         var isBrowserOpen = false;
 
-        var accounts = new[] { "kimmonismus", "ai_for_success", "slow_developer" };
+        var accounts = new[] { "sama", "DataChaz", "mattshumer_", "karpathy", "kimmonismus", "ai_for_success", "slow_developer" };
 
         var tweetsText = "";
 
@@ -52,7 +49,12 @@ public class TwitterAiNewsChecker
             if (!isBrowserOpen)
             {
                 // Open the Windows Calculator application.
-                await client.Chrome.OpenChromeAsync(url, ExistingChromeInstanceStrategy.ForceClose); // <-------- CLOSES ANY EXISTING OPEN CHROME INSTANCE
+                var openChromeResult = await client.Chrome.OpenChromeAsync(url);
+                if (openChromeResult.Message.StartsWith("Error"))
+                {                    
+                    Console.WriteLine("Error: Could not open Chrome. Use ForceClose parameter or ensure there is no open instance before running this example.");
+                    return; // Exit if Chrome cannot be opened
+                }
                 isBrowserOpen = true;
                 await Task.Delay(7000); // give the newly opened browser some time to load that page
             }
@@ -93,7 +95,7 @@ public class TwitterAiNewsChecker
                 var result = await chatClient.CompleteChatAsync([
                         ChatMessage.CreateUserMessage(
                             "These are the latest tweets of some twitter accounts that are typically very up-to-date on AI news. " +
-                            "Give me a summary on the concrete topics they write about (3 bullet points, one short sentence, each) and a rating 0-100 if you have the impression that actual very big breaking news has just occurred within the last hour." +
+                            "Give me a summary on the concrete topics they write about (5 bullet points, one short sentence, each) and a rating 0-100 if you have the impression that actual very big breaking news has just occurred within the last hour." +
                             "<tweets>" +
                             $"{tweetsText}" +
                             "</tweets>" +
